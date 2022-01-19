@@ -1,4 +1,4 @@
-package com.phamquyen.luanvan.api;
+package com.phamquyen.luanvan.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
