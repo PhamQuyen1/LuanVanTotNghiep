@@ -22,6 +22,6 @@ public class Roles {
     private ERole roleName;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "userId")
-    private List<Users> users;
+//    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userId")
+//    private List<Users> users;
 }

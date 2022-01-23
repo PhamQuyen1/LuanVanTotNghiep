@@ -37,7 +37,9 @@ public class RegistrationServiceImpl implements RegistrationService {
                 new Users(
                         requestRegistration.getEmail(),
                         requestRegistration.getUsername(),
-                        requestRegistration.getPassword()
+                        requestRegistration.getPassword(),
+                        requestRegistration.getAddress(),
+                        requestRegistration.getPhone()
                 ));
 
         // TODO: send mail

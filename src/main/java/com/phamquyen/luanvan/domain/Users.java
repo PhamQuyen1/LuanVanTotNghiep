@@ -10,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Data
@@ -23,9 +22,11 @@ public class Users implements UserDetails {
     private Long userId;
     private String email;
     private String password;
-    private String username;
+    private String fullname;
     private String address;
     private String phone;
+
+    @Column(columnDefinition = "boolean default false")
     private boolean locked = false;
     private boolean enabled = false;
 
@@ -35,10 +36,12 @@ public class Users implements UserDetails {
 //    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "tokenId")
 //    private List<ConfirmationToken> confirmationTokens;
 
-    public Users(String email, String username, String password){
+    public Users(String email, String fullname, String password, String address, String phone){
         this.email = email;
-        this.username = username;
+        this.fullname = fullname;
         this.password = password;
+        this.address = address;
+        this.phone = phone;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !locked;
+        return locked;
     }
 
     @Override
