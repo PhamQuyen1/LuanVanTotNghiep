@@ -20,6 +20,7 @@ target/
 *.ipr
 /frontend/node_modules
 /frontend/public
+/upload
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
