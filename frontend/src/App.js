@@ -4,6 +4,7 @@ import './App.css';
 import Home from './site/screens/Home';
 import Header from './site/components/Header';
 import Footer from './site/components/Footer';
+import ProductDetail from './site/screens/ProductDetail';
 import {
   BrowserRouter,
   Switch,
@@ -15,7 +16,7 @@ function App() {
     <BrowserRouter>
       <div id="home">
         <Header />
-        
+
         <Switch>
           {/* <Route path="/" exact>
             <About />
@@ -23,8 +24,11 @@ function App() {
           <Route path="/users">
             <Users />
           </Route> */}
-          <Route path="/" exact={true}> 
+          <Route path="/" exact={true}>
             <Home />
+          </Route>
+          <Route path="/productDetail" exact={true}>
+            <ProductDetail />
           </Route>
         </Switch>
         <Footer />

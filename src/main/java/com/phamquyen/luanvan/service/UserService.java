@@ -28,4 +28,6 @@ public interface UserService {
     void updatePassword(String password);
 
     void modifiedInfo(ModifiedInfoRequest modifiedInfoRequest);
+
+    Users getUserAuthenticate();
 }

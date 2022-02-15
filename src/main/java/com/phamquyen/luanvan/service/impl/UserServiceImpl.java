@@ -12,7 +12,7 @@ import com.phamquyen.luanvan.service.EmailService;
 import com.phamquyen.luanvan.service.RoleService;
 import com.phamquyen.luanvan.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -160,5 +160,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         user.setLocked(modifiedInfoRequest.isLooked());
         user.setRole(roleService.getRole(ERole.valueOf(modifiedInfoRequest.getRole())));
         usersRepository.save(user);
+    }
+
+    @Override
+    public Users getUserAuthenticate(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return usersRepository.findByEmail(userDetails.getUsername()).get();
     }
 }
