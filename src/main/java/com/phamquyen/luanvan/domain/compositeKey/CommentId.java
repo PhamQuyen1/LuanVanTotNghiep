@@ -12,6 +12,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentId implements Serializable {
-    private Users user;
-    private Product product;
+    private Long reviewId;
+    private Long user;
+    private Long product;
 }

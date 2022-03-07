@@ -14,10 +14,17 @@ import java.util.List;
 public class ProductImage {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_product_image"
+    )
+    @SequenceGenerator(
+            name = "seq_product_image",
+            allocationSize = 1
+    )
     private Long imageId;
 
-    @Column(nullable = false, unique = true, length = 50)
+//    @Column(nullable = false, unique = true, length = 50)
     private String imageUrl;
 
 //    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

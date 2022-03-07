@@ -10,6 +10,9 @@ import com.phamquyen.luanvan.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+
 @Service
 @AllArgsConstructor
 public class RegistrationServiceImpl implements RegistrationService {
@@ -22,12 +25,16 @@ public class RegistrationServiceImpl implements RegistrationService {
     public String confirmAt(String token) {
 //        TODO: save confirm time
         ConfirmationToken confirmationToken = confirmTokenService.getToken(token);
-        confirmTokenService.setConfirmAt(confirmationToken);
-
-//        TODO: unlock account
         Users users = confirmationToken.getUsers();
-        userService.confirmAt(users);
-        return "success";
+
+        if(LocalDateTime.now().isBefore(confirmationToken.getExpiredAt())){
+            confirmTokenService.setConfirmAt(confirmationToken);
+            userService.confirmAt(users);
+            return "success";
+        }
+        confirmTokenService.delete(confirmationToken);
+//        userService.delete(users);
+        return "expired";
     }
 
     @Override
@@ -36,7 +43,7 @@ public class RegistrationServiceImpl implements RegistrationService {
         String token = userService.signup(
                 new Users(
                         requestRegistration.getEmail(),
-                        requestRegistration.getUsername(),
+                        requestRegistration.getFullname(),
                         requestRegistration.getPassword(),
                         requestRegistration.getAddress(),
                         requestRegistration.getPhone()
@@ -45,8 +52,8 @@ public class RegistrationServiceImpl implements RegistrationService {
         // TODO: send mail
 
         String subject = "Xác nhận thông tin đăng kí tài khoản";
-        String link = "http://localhost:8080/api/v1/registration/confirm?token=" + token;
-        String content = "<h4>Chào " + requestRegistration.getUsername() + ",</h4>\n" +
+        String link = "http://localhost:3000/confirm?token=" + token;
+        String content = "<h4>Chào " + requestRegistration.getFullname() + ",</h4>\n" +
                 "<div>Cảm ơn bạn đã chọn cửa hàng của chúng tôi. Bạn cần nhấn vào link bên dưới " +
                 "để hoàn thành quá trình đăng kí.</div>\n" +
                 "\n" +
@@ -54,7 +61,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 "\n" +
                 "<div>Link: <a href=\"" + link + "\">Kích hoạt ngay</a></div>\n" +
                 "\n" +
-                "<div>Link chỉ tồn tại trong 10 phút.</div>\n" +
+//                "<div>Link chỉ tồn tại trong 10 phút.</div>\n" +
                 "\n" +
                 "<div>&nbsp;</div>\n" +
                 "\n" +

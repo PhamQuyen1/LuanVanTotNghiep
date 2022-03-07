@@ -3,12 +3,15 @@ package com.phamquyen.luanvan.controller;
 import com.phamquyen.luanvan.domain.Category;
 import com.phamquyen.luanvan.dto.CategoryRequest;
 import com.phamquyen.luanvan.service.CategoryService;
+import com.phamquyen.luanvan.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -18,9 +21,17 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private ProductService productService;
+
     @GetMapping("public")
     public ResponseEntity<?> listAll() {
         return ResponseEntity.ok(categoryService.listAll());
+    }
+
+    @GetMapping("public/categoryAndQuantity")
+    public ResponseEntity<Map<Long, Integer>> listAllAndQuantity() {
+        return ResponseEntity.ok(productService.listAllAndQuantity());
     }
 
     @GetMapping("{categoryId}")

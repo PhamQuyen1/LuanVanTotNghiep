@@ -1,12 +1,11 @@
 package com.phamquyen.luanvan.domain;
 
-import com.phamquyen.luanvan.enumObj.ERole;
+import com.phamquyen.luanvan.enumeration.ERole;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Data

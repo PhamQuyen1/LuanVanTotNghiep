@@ -14,6 +14,8 @@ import java.util.List;
 public class OrderRequest {
     private String orderAddress;
     private String orderNote;
+    private int shippingFee;
+    private String paymentMethod;
     @JsonProperty("itemRequests")
     private List<ItemRequest> itemRequests = new ArrayList<>();
 }

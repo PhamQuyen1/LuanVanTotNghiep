@@ -4,8 +4,9 @@ import com.phamquyen.luanvan.domain.ConfirmationToken;
 import com.phamquyen.luanvan.domain.Users;
 import com.phamquyen.luanvan.dto.ConfirmForgotPasswordRequest;
 import com.phamquyen.luanvan.dto.ModifiedInfoRequest;
+import com.phamquyen.luanvan.dto.UpdatePassword;
 import com.phamquyen.luanvan.dto.UserRequest;
-import com.phamquyen.luanvan.enumObj.ERole;
+import com.phamquyen.luanvan.enumeration.ERole;
 import com.phamquyen.luanvan.repository.UsersRepository;
 import com.phamquyen.luanvan.service.ConfirmTokenService;
 import com.phamquyen.luanvan.service.EmailService;
@@ -50,7 +51,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         users.setLocked(true);
         usersRepository.save(users);
     }
-
+    @Override
+    public void delete(Users users){
+        System.out.println(users);
+        users.setRole(null);
+        usersRepository.deleteById(users.getUserId());
+    }
     @Override
     public String signup(Users users) {
         Optional<Users> user = usersRepository.findByEmail(users.getEmail());
@@ -132,24 +138,29 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void updateInfo(UserRequest userRequest, UserDetails user) {
-        Users userRepo = usersRepository.findByEmail(user.getUsername()).get();
-        userRepo.setAddress(userRequest.getAddress());
-        userRepo.setFullname(userRequest.getFullname());
-        userRepo.setPhone(userRequest.getPhone());
-        usersRepository.save(userRepo);
+    public Users updateInfo(UserRequest userRequest) {
+        Users user = this.getUserAuthenticate();
+        user.setAddress(userRequest.getAddress());
+        user.setFullname(userRequest.getFullname());
+        user.setPhone(userRequest.getPhone());
+        return usersRepository.save(user);
     }
 
     @Override
-    public void updatePassword(String password) {
-        String newPassword = passwordEncoder.encode(password);
+    public boolean updatePassword(UpdatePassword updatePassword) {
+        String newPassword = passwordEncoder.encode(updatePassword.getNewPassword());
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
 
         Users user = usersRepository.findByEmail(userDetails.getUsername()).get();
-        user.setPassword(newPassword);
-        usersRepository.save(user);
+        if(passwordEncoder.matches(updatePassword.getPassword(), user.getPassword())){
+            System.out.println(passwordEncoder.matches(updatePassword.getPassword(), user.getPassword()));
+            user.setPassword(newPassword);
+            usersRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -167,5 +178,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return usersRepository.findByEmail(userDetails.getUsername()).get();
+    }
+
+    @Override
+    public List<Users> findAllByFullname(String fullname){
+        return usersRepository.findAllByFullname(fullname);
+    }
+    @Override
+    public List<Users> findAllByEmail(String email){
+        return usersRepository.findAllByEmail(email);
+    }
+    @Override
+    public List<Users> findAll(){
+        return  usersRepository.findAll();
+    }
+
+    @Override
+    public void save(Users user){
+        usersRepository.save(user);
     }
 }

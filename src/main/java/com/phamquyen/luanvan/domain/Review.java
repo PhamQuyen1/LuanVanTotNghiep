@@ -13,7 +13,19 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @IdClass(CommentId.class)
-public class Comment {
+public class Review {
+
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_review"
+    )
+    @SequenceGenerator(
+            name = "seq_review",
+            allocationSize = 1
+    )
+    private Long reviewId;
+
     @Id
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -24,6 +36,8 @@ public class Comment {
     @JoinColumn(name = "product_id")
     private Product product;
 
+
     private String comment;
+    private int reviewScore;
     private LocalDateTime createAt;
 }

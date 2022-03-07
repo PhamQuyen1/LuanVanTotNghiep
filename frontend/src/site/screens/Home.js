@@ -7,11 +7,16 @@ import ReactOwlCarousel from 'react-owl-carousel';
 import Item from '../components/Item';
 import CategoryItem from '../components/CategoryItem'
 import CategoryApi from '../../api/CategoryApi';
+import productApi from '../../api/ProductApi';
+import ProductItem from '../components/ProductItem';
+import { Link } from 'react-router-dom';
 
 function Home() {
 
     const [categories, setCategories] = useState([]);
-
+    const [topSaleProducts, setTopSaleProducts] = useState([]);
+    const [topReviewProducts, setTopReviewProducts] = useState([]);
+    const [categoryProductQuantity, setcategoryProductQuantity] = useState([]);
     useEffect(() => {
         const fectCategoryList = async () => {
             try {
@@ -23,13 +28,39 @@ function Home() {
             }
 
         }
+        const fectCategoryProductQuantity = async () => {
+            try {
+                const response = await CategoryApi.getCategoryProducQuantity();
+                console.log(response);
+                setcategoryProductQuantity(response);
+            } catch (error) {
+                console.log('Failed to fetch Category list: ', error);
+            }
+
+        }
+
+        const fetchTopSaleProduct = async () => {
+            try {
+                const response = await productApi.getTopSaleProducts();
+                console.log("1,", response);
+                setTopSaleProducts(response);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        const fetchTopReviewProduct = async () => {
+            try {
+                const response = await productApi.getTopReviewProducts();
+                console.log(response);
+                setTopReviewProducts(response);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fectCategoryProductQuantity();
+        fetchTopSaleProduct();
+        fetchTopReviewProduct();
         fectCategoryList();
-        // axios.get("http://localhost:8080/api/v1/category/public")
-        //     .then(response => {
-        //         console.log(response);
-        //         setCategories(response.data);
-        //     })
-        //     .catch(error => console.log(error));
     }, []);
     return (
         <>
@@ -40,6 +71,7 @@ function Home() {
                             className="d-block w-100"
                             src="img/home/home1-banner1.jpg"
                             alt="First slide"
+                        // style={{ width: '1519px', height='800px' }}
                         />
                     </Carousel.Item>
                     <Carousel.Item>
@@ -119,8 +151,8 @@ function Home() {
                                                             categories.length &&
                                                             (
                                                                 <ReactOwlCarousel className='owl-theme' loop margin={10} nav items={5} dots={false}>
-                                                                    {categories.map(category => {
-                                                                        return <CategoryItem item={category} key={category.categoryId} />
+                                                                    {categories.map((category, index) => {
+                                                                        return <CategoryItem item={category} key={category.categoryId} quantity={categoryProductQuantity[category.categoryId]} />
                                                                     }
                                                                     )}
                                                                 </ReactOwlCarousel>
@@ -166,11 +198,16 @@ function Home() {
                                                     </div>
                                                 </div>
                                                 <div className="tab-content" style={{ marginTop: "0" }}>
+                                                    {
+                                                        topSaleProducts.map(product => {
+                                                            return <ProductItem product={product} key={product.productId} />
+                                                        })
+                                                    }
+                                                    {/* <Item />
                                                     <Item />
                                                     <Item />
                                                     <Item />
-                                                    <Item />
-                                                    <Item />
+                                                    <Item /> */}
                                                 </div>
                                             </div>
                                         </div>
@@ -184,15 +221,15 @@ function Home() {
                                                     </div>
                                                 </div>
                                                 <div className="tab-content" style={{ marginTop: "0" }}>
-                                                    <Item />
-                                                    <Item />
-                                                    <Item />
-                                                    <Item />
-                                                    <Item />
+                                                    {
+                                                        topReviewProducts.map(product => {
+                                                            return <ProductItem product={product} key={product.productId} />
+                                                        })
+                                                    }
 
-                                                    <div className="content-showmore text-center has-showmore">
-
-                                                        <a className="btn btn-default novShowMore" href="./product-grid-sidebar-right.html"><span>Tất cả sản phẩm</span></a>
+                                                    <div className="content-showmore text-center has-showmore" style={{ display: 'inline' }}>
+                                                        <Link className="btn btn-default novShowMore" to="/product"><span>Tất cả sản phẩm</span></Link>
+                                                        {/* <a className="btn btn-default novShowMore" href="./product-grid-sidebar-right.html"><span>Tất cả sản phẩm</span></a> */}
                                                         <input type="hidden" value="0" className="count_showmore" />
                                                     </div>
                                                 </div>
@@ -204,12 +241,13 @@ function Home() {
 
 
                                     </section>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
 
         </>
     );

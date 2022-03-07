@@ -15,7 +15,7 @@ function Footer() {
                                             <p className="logo-footer">
                                                 <img src="img/home/logo-mobie.png" alt="img" />
                                             </p>
-                                            <p className="content-logo">Furnitica xác định luôn trung thành với những giá trị
+                                            <p className="content-logo">Grocery Store xác định luôn trung thành với những giá trị
                                                 cốt lõi của mình để luôn là sự chọn số một của người tiêu dùng
                                             </p>
                                         </div>
@@ -134,10 +134,10 @@ function Footer() {
                                                     Phương thức thanh toán
                                                 </div>
                                                 <div className="payment-image">
-                                                    <img className="img-fluid" src="img/home/payment.png" alt="img"/>
+                                                    <img className="img-fluid" src="img/home/payment.png" alt="img" />
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>

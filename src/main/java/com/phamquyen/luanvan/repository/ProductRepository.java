@@ -18,6 +18,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.productName LIKE %:productName% AND p.deleted = FALSE")
     Page<Product> findAll(String productName, Pageable pageable);
 
-    @Query("SELECT p FROM Product p WHERE p.category LIKE :category AND p.deleted = FALSE")
-    Page<Product> findAll(Category category, Pageable pageable);
+//    @Query("SELECT p FROM Product p WHERE p.category LIKE :category AND p.deleted = FALSE")
+    Page<Product> findAllByCategory(Category category, Pageable pageable);
+
+    List<Product> findAllByCategory(Category category);
 }

@@ -4,7 +4,7 @@ import com.phamquyen.luanvan.domain.Product;
 import com.phamquyen.luanvan.domain.ProductImage;
 
 public interface ProductImageService {
-    ProductImage save(String productImageName, Product product);
+    ProductImage save(String productImageName);
 
     void delete(Product product);
 }

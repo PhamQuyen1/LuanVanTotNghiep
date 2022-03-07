@@ -21,32 +21,27 @@ public class ProductImageServiceImpl implements ProductImageService {
     FileService fileService;
 
     @Override
-    public ProductImage save(String productImageName, Product product) {
-        try {
+    public ProductImage save(String productImageName) {
             ProductImage productImage = new ProductImage();
             productImage.setImageUrl(productImageName);
-//            productImage.setProduct(product);
-            return productImageRepository.save(productImage);
-        } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
-        }
-
+            productImage = productImageRepository.save(productImage);
+            return productImage;
     }
 
     @Override
     public void delete(Product product) {
-//        try {
-            List<ProductImage> productImages = product.getProductImages();
-            for (ProductImage productImage : productImages) {
-                ProductImage p = productImageRepository.findById(productImage.getImageId())
-                        .orElseThrow(()-> new IllegalStateException("Hinh anh khong tn tai"));
-                fileService.delete(productImage.getImageUrl());
-                productImageRepository.deleteById(p.getImageId());
-            }
-            System.out.println("a");
-//        } catch (Exception e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
+////        try {
+////            List<ProductImage> productImages = product.getProductImages();
+//            for (ProductImage productImage : productImages) {
+//                ProductImage p = productImageRepository.findById(productImage.getImageId())
+//                        .orElseThrow(()-> new IllegalStateException("Hinh anh khong tn tai"));
+//                fileService.delete(productImage.getImageUrl());
+//                productImageRepository.deleteById(p.getImageId());
+//            }
+//            System.out.println("a");
+////        } catch (Exception e) {
+////            throw new RuntimeException(e.getMessage());
+////        }
 
     }
 

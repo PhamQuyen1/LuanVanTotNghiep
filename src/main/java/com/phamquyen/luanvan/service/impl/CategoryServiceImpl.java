@@ -5,11 +5,14 @@ import com.phamquyen.luanvan.dto.CategoryRequest;
 import com.phamquyen.luanvan.repository.CategoryRepository;
 import com.phamquyen.luanvan.service.CategoryService;
 import com.phamquyen.luanvan.service.FileService;
+import com.phamquyen.luanvan.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -21,13 +24,12 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private FileService fileService;
 
-    @Override
     public List<Category> listAll() {
         return categoryRepository.findAll();
     }
 
     @Override
-    public Category findById(Long categoryId) {
+    public Category findById(Long categoryId) throws IllegalStateException {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new IllegalStateException("Category khong ton tai"));
     }

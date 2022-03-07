@@ -1,7 +1,7 @@
 package com.phamquyen.luanvan.service.impl;
 
 import com.phamquyen.luanvan.domain.Roles;
-import com.phamquyen.luanvan.enumObj.ERole;
+import com.phamquyen.luanvan.enumeration.ERole;
 import com.phamquyen.luanvan.repository.RolesRepository;
 import com.phamquyen.luanvan.service.RoleService;
 import lombok.AllArgsConstructor;

@@ -1,5 +1,6 @@
 package com.phamquyen.luanvan.service;
 
+import com.phamquyen.luanvan.domain.Category;
 import com.phamquyen.luanvan.domain.Product;
 import com.phamquyen.luanvan.dto.ProductRequest;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,4 +21,14 @@ public interface ProductService {
     void deleteProductById(Long productId);
 
     void updateProductDiscount(Long productId, int discountPercent);
+
+    void updateQuantityProduct(Product product, int quantity);
+
+    void addWishList(Long productId);
+
+    void deleteWishList(Long productId);
+
+    List<Product> findAll();
+
+    Map<Long, Integer> listAllAndQuantity();
 }

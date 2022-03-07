@@ -1,4 +1,4 @@
-package com.phamquyen.luanvan.enumObj;
+package com.phamquyen.luanvan.enumeration;
 
 public enum ERole {
     USER,

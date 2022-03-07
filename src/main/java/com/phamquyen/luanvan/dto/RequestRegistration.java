@@ -14,7 +14,7 @@ public class RequestRegistration {
 
     private String email;
     private String password;
-    private String username;
+    private String fullname;
     private String address;
     private String phone;
 

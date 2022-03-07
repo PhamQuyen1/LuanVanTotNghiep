@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -22,12 +21,17 @@ public class ConfirmTokenServiceImpl implements ConfirmTokenService {
 
     @Override
     public ConfirmationToken getToken(String token){
+        System.out.println(token);
         return confirmTokenRepository.findByToken(token)
                 .orElseThrow(()->new IllegalStateException("Token khong ton tai"));
 
 
     }
-
+    @Override
+    public void delete(ConfirmationToken confirmationToken){
+        System.out.println(confirmationToken);
+        confirmTokenRepository.delete(confirmationToken);
+    }
     @Override
     public void setConfirmAt(ConfirmationToken token){
         ConfirmationToken confirmationToken =

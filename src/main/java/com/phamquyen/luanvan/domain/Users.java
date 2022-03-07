@@ -19,7 +19,14 @@ import java.util.List;
 public class Users implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_user"
+    )
+    @SequenceGenerator(
+            name = "seq_user",
+            allocationSize = 1
+    )
     private Long userId;
     private String email;
     private String password;
@@ -31,11 +38,11 @@ public class Users implements UserDetails {
     private boolean locked = false;
     private boolean enabled = false;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "role_id")
     private Roles role;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "wish_list", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> wishlist;

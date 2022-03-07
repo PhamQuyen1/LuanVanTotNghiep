@@ -1,10 +1,7 @@
 package com.phamquyen.luanvan.controller;
 
 import com.phamquyen.luanvan.domain.Users;
-import com.phamquyen.luanvan.dto.ConfirmForgotPasswordRequest;
-import com.phamquyen.luanvan.dto.ForgotPasswordRequest;
-import com.phamquyen.luanvan.dto.ModifiedInfoRequest;
-import com.phamquyen.luanvan.dto.UserRequest;
+import com.phamquyen.luanvan.dto.*;
 import com.phamquyen.luanvan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/v1/user")
 public class UserController {
 
@@ -53,14 +51,14 @@ public class UserController {
 
     @PutMapping("updateInfo")
     public ResponseEntity<?> updateInfo(@RequestBody UserRequest userRequest, Authentication authentication){
-        UserDetails user = (UserDetails) authentication.getPrincipal();
-        userService.updateInfo(userRequest, user);
-        return ResponseEntity.ok("Success");
+        return ResponseEntity.ok(userService.updateInfo(userRequest));
     }
     @PutMapping("updatePassword")
-    public ResponseEntity<?> updatePassword(@RequestParam String password){
-        userService.updatePassword(password);
-        return ResponseEntity.ok("Success");
+    public ResponseEntity<?> updatePassword(@RequestBody UpdatePassword updatePassword){
+        boolean result = userService.updatePassword(updatePassword);
+        if(result)
+            return ResponseEntity.ok("Success");
+        return ResponseEntity.ok("Password không chính xác");
     }
 
     @PutMapping("modifiedInfo")

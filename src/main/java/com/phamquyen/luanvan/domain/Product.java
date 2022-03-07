@@ -15,7 +15,14 @@ import java.util.List;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_product"
+    )
+    @SequenceGenerator(
+            name = "seq_product",
+            allocationSize = 1
+    )
     private Long productId;
     private String productName;
     private String description;
@@ -34,7 +41,7 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     private List<ProductImage> productImages;
 

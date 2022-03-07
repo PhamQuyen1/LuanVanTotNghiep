@@ -14,7 +14,14 @@ import java.time.LocalDateTime;
 public class ConfirmationToken {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_confirmation_token"
+    )
+    @SequenceGenerator(
+            name = "seq_confirmation_token",
+            allocationSize = 1
+    )
     private Long tokenId;
 
     private String token;
@@ -25,7 +32,7 @@ public class ConfirmationToken {
     private LocalDateTime expiredAt;
     private LocalDateTime confirmAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private Users users;
 
