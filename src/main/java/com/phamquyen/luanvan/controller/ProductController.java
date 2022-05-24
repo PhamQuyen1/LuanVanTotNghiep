@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/v1/product")
 public class ProductController {
 
@@ -23,15 +23,15 @@ public class ProductController {
 
     @Autowired
     private ItemService itemService;
-//    @GetMapping("public")
-//    public ResponseEntity<Map<String, Object>> listAll(
-//            @RequestParam(required = false) String productName,
-//            @RequestParam(required = false) Long categoryId,
-//            @RequestParam(defaultValue = "1") int page,
-//            @RequestParam(defaultValue = "productId") String sortField,
-//            @RequestParam(defaultValue = "asc") String sortDir){
-//        return ResponseEntity.ok(productService.listAll(productName, page, categoryId, sortField, sortDir));
-//    }
+    @GetMapping("public")
+    public ResponseEntity<Map<String, Object>> listAll(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "productId") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir){
+        return ResponseEntity.ok(productService.listAll(productName, page, categoryId, sortField, sortDir));
+    }
 
     @PostMapping("public")
     public ResponseEntity<Map<String, Object>> listAll(@RequestBody ProductFilterRequest productFilterRequest){
@@ -64,6 +64,8 @@ public class ProductController {
             })
 //    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<?> addNewProduct(@RequestPart("file") MultipartFile[] file, @RequestPart("productRequest") ProductRequest productRequest){
+        System.out.println(productRequest);
+        System.out.println(file);
         productService.saveOrUpdate(file, productRequest);
         return ResponseEntity.ok("Success");
     }
@@ -77,12 +79,12 @@ public class ProductController {
                     "Content-Type=multipart/form-data"
             })
 //    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<?> updateProduct(@RequestPart("file") MultipartFile[] file, @RequestPart("productRequest") ProductRequest productRequest){
+    public ResponseEntity<?> updateProduct(@RequestPart(required = false) MultipartFile[] file, @RequestPart("productRequest") ProductRequest productRequest){
         productService.saveOrUpdate(file, productRequest);
         return ResponseEntity.ok("Success");
     }
 
-    @DeleteMapping("{productId}")
+    @DeleteMapping("/{productId}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<?> deleteProductById(@PathVariable Long productId){
         productService.deleteProductById(productId);

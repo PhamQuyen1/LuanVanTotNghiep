@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Link } from 'react-router-dom';
 
 function AboutUs() {
     return (
@@ -14,9 +15,8 @@ function AboutUs() {
                                 <div className="breadcrumb">
                                     <ol>
                                         <li>
-                                            <a href="#">
-                                                <span>Trang chủ</span>
-                                            </a>
+
+                                            <Link to="/" className="parent"><span>Trang chủ</span></Link>
                                         </li>
                                         <li>
                                             <a href="#">

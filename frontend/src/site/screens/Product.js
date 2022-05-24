@@ -94,9 +94,7 @@ function Product(props) {
                                             <div className="breadcrumb">
                                                 <ol>
                                                     <li>
-                                                        <a href="#">
-                                                            <span>Trang chủ</span>
-                                                        </a>
+                                                        <Link to="/" className="parent"><span>Trang chủ</span></Link>
                                                     </li>
                                                     <li>
                                                         <a href="#">
@@ -126,7 +124,7 @@ function Product(props) {
 
                                                                 </ul>
                                                                 <div className="hidden-sm-down total-products">
-                                                                    <p>Có 12 sản phẩm tất cả</p>
+                                                                    <p>Có {productList.totalItem} sản phẩm tất cả</p>
                                                                 </div>
                                                             </div>
                                                             <div className="col col-xs-12">

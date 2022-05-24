@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 import {
   Link
 } from "react-router-dom";
+import { toast } from 'react-toastify';
 import authenApi from '../../api/AuthenApi';
 import CategoryApi from '../../api/CategoryApi';
 import { deleteItem } from './action';
@@ -42,6 +43,9 @@ function Header(props) {
 
   const handleOnLogout = () => {
     dispatch(logout());
+    toast.success('Bạn đã đăng xuất', {
+      toastId: '1'
+    })
     history.push("/");
     // setUser({});
   }
@@ -97,9 +101,8 @@ function Header(props) {
 
               <div className="col-sm-2 col-md-2 d-flex align-items-center">
                 <div id="logo">
-                  <a href="index-2.html">
-                    <img className="img-fluid" src="img/home/logo-mobie.png" alt="logo" />
-                  </a>
+
+                  <Link to="/" className="parent"><img className="img-fluid" src="/img/home/logo-mobie.png" alt="logo" /></Link>
                 </div>
               </div>
 
@@ -125,9 +128,7 @@ function Header(props) {
                       <Link to="/about-us" className="parent">Giới thiệu</Link>
 
                     </li>
-                    <li>
-                      <a href="contact.html" className="parent">Liên hệ</a>
-                    </li>
+
                   </ul>
                 </div>
               </div>
@@ -135,7 +136,7 @@ function Header(props) {
 
               <div id="search_widget" className="col-sm-6 col-md-5 align-items-center justify-content-end d-flex">
                 <form onSubmit={handleOnSubmit}>
-                  <input type="text" name="s" value={`${productSearch != null ? productSearch : ""}`} onChange={(e) => setProductSearch(e.target.value)} placeholder="Tìm kiếm sản phẩm" className="ui-autocomplete-input" autocomplete="off" />
+                  <input type="text" name="s" value={`${productSearch != null ? productSearch : ""}`} onChange={(e) => setProductSearch(e.target.value)} placeholder="Tìm kiếm sản phẩm" className="ui-autocomplete-input" autoComplete="off" />
                   <button type='submit' >
                     <i className="fa fa-search"></i>
                   </button>
@@ -162,8 +163,8 @@ function Header(props) {
                                   <td >
 
                                     <div>
-                                      <Link to="/profile" class="login" rel="nofollow" title="Log in to your customer account">
-                                        <i class="fa fa-cog"> </i>
+                                      <Link to="/profile" className="login" rel="nofollow" title="Log in to your customer account">
+                                        <i className="fa fa-cog"> </i>
                                         <span> Tài khoản của tôi</span>
                                       </Link>
                                     </div>
@@ -176,8 +177,8 @@ function Header(props) {
                                 <tr >
                                   <td >
                                     <div>
-                                      <Link to="/login" class="login" href="user-login.html" rel="nofollow" title="Log in to your customer account">
-                                        <i class="fa fa-sign-in"> </i>
+                                      <Link to="/login" className="login" href="user-login.html" rel="nofollow" title="Log in to your customer account">
+                                        <i className="fa fa-sign-in"> </i>
                                         <span> Đăng nhập</span>
                                       </Link>
                                     </div>
@@ -188,16 +189,30 @@ function Header(props) {
 
                             {
                               user && (
-                                <tr style={{ cursor: 'pointer' }}>
-                                  <td >
-                                    <div>
-                                      <a onClick={handleOnLogout} className="register" rel="nofollow" title="Register Account">
-                                        <i className="fa fa-user"> </i>
-                                        <span> Đăng xuất</span>
-                                      </a>
-                                    </div>
-                                  </td>
-                                </tr>
+                                <>
+                                  <tr style={{ cursor: 'pointer' }}>
+                                    <td >
+                                      <div>
+                                        <a onClick={handleOnLogout} className="register" rel="nofollow" title="Register Account">
+                                          <i className="fa fa-user"> </i>
+                                          <span> Đăng xuất</span>
+                                        </a>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                  <tr style={{ cursor: 'pointer' }}>
+                                    <td >
+                                      <div>
+                                        <Link to={"/wishList"} className="register" rel="nofollow" title="Danh sách yêu thích">
+                                          <i className="fa fa-heart"> </i>
+                                          <span> Danh sách yêu thích</span>
+                                        </Link>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </>
+
+
                               )
                             }
 
@@ -206,8 +221,8 @@ function Header(props) {
                                 <tr >
                                   <td >
                                     <div>
-                                      <Link to="/register" class="login" href="user-login.html" rel="nofollow" title="Log in to your customer account">
-                                        <i class="fa fa-sign-in"> </i>
+                                      <Link to="/register" className="login" href="user-login.html" rel="nofollow" title="Log in to your customer account">
+                                        <i className="fa fa-sign-in"> </i>
                                         <span> Đăng kí</span>
                                       </Link>
                                     </div>
@@ -270,15 +285,15 @@ function Header(props) {
                             }
 
                             <tr className="total">
-                              <td colspan="2">Tổng tiền:</td>
+                              <td colSpan="2">Tổng tiền:</td>
                               <td><NumberFormat value={totalAmount} displayType={'text'} thousandSeparator={true} suffix={'đ'} /></td>
                             </tr>
 
                             <tr>
-                              <td colspan="3" className="d-flex justify-content-center">
+                              <td colSpan="3" className="d-flex justify-content-center">
                                 <div className="cart-button">
                                   <Link to={"/shoppingCart"} title="View Cart">Xem Giỏ hàng</Link>
-                                  <a href="product-checkout.html" title="Checkout">Thanh toán</a>
+                                  <Link to={"/checkout"} title="Checkout">Thanh toán</Link>
                                 </div>
                               </td>
                             </tr>

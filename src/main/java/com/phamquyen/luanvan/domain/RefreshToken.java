@@ -12,7 +12,14 @@ import java.time.Instant;
 @NoArgsConstructor
 public class RefreshToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_refresh"
+    )
+    @SequenceGenerator(
+            name = "seq_refresh",
+            allocationSize = 1
+    )
     private Long tokenId;
 
     private String token;

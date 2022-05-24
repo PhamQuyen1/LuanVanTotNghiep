@@ -1,23 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import NumberFormat from 'react-number-format';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { toast, ToastContainer } from 'react-toastify';
 import orderApi from '../../api/OrderApi';
+import ShoppingCartItem from '../components/ShoppingCartItem';
 
 function Profile(props) {
 
-    const { user } = props;
+    // const { user } = props;
+    // const { user } = useSelector(state => state.todoUser);
+    const { user } = useSelector(state => state.todoUser);
     console.log(user);
-
+    const [isFetch, setFetch] = useState(false);
+    const [orders, setOrders] = useState({});
     const [param, setParam] = useState({
         email: user.email,
-        page: 1
+        page: 1,
+        sortField: 'orderId',
+        sortDir: 'desc',
+        paymentMethod: null,
+        status: null
     })
 
     useEffect(() => {
-        const response = orderApi.listAll(param);
-        console.log(response);
-        console.log(response);
-    }, [])
+        let mounted = true;
+        const fetchOrder = async () => {
+            try {
+
+                const response = await orderApi.listAll(param);
+                console.log("orders", response);
+
+                setOrders(response);
+
+                setFetch(false)
+                // window.location.reload();
+
+            } catch (error) {
+                console.log(error);
+                mounted = false;
+                setFetch(true);
+            }
+        }
+        fetchOrder();
+
+
+    }, [isFetch])
+    console.log('aaa', orders);
+    // window.location.reload();
     return (
         <>
             <div className="user-acount">
@@ -30,9 +61,7 @@ function Profile(props) {
                                 <div className="breadcrumb">
                                     <ol>
                                         <li>
-                                            <a href="#">
-                                                <span>Trang chủ</span>
-                                            </a>
+                                            <Link to="/" className="parent"><span>Trang chủ</span></Link>
                                         </li>
                                         <li>
                                             <a href="#">
@@ -48,6 +77,7 @@ function Profile(props) {
                             <div className="container">
                                 <div id="main">
                                     <h1 className="title-page">Tài khoản của tôi</h1>
+
                                     <div className="content" id="block-history">
                                         <table className="std table">
                                             <tbody>
@@ -103,218 +133,139 @@ function Profile(props) {
                                         <div className="cart-grid row">
                                             <div className="col-md-9 col-xs-12 check-info">
                                                 <h1 className="title-page">Đơn hàng đã mua</h1>
-                                                <p>Bạn chưa đặt đơn hàng nào.</p>
 
-                                                <div id="block-history" className="block-center">
-                                                    <table className="std table">
-                                                        <thead className="thead-dark">
-                                                            <tr>
-                                                                <th className="first_item">Ngày đặt hàng</th>
-                                                                <th className="item mywishlist_first">Địa chỉ giao hàng</th>
-                                                                <th className="item mywishlist_first">Tình trạng</th>
-                                                                <th className="item mywishlist_second">Tổng tiền</th>
-                                                                <th className="item mywishlist_second">Xem chi tiết</th>
+                                                {
+                                                    Object.keys(orders).length == 0
+                                                        ? <p>Bạn chưa đặt đơn hàng nào.</p>
+                                                        : <div id="block-history" className="block-center">
+                                                            <table className="std table">
+                                                                <thead className="thead-dark">
+                                                                    <tr>
+                                                                        <th className="first_item">Ngày đặt hàng</th>
+                                                                        <th className="item mywishlist_first">Địa chỉ giao hàng</th>
+                                                                        <th className="item mywishlist_first">Tình trạng</th>
+                                                                        <th className="item mywishlist_second">Tổng tiền</th>
+                                                                        <th className="item mywishlist_second">Xem chi tiết</th>
 
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <tr id="wishlist_1">
-                                                                <td>
-                                                                    2020-01-01
-                                                                </td>
-                                                                <td className="bold align_center">
-                                                                    Cần thơ Viet Nam
-                                                                </td>
-                                                                <td>Đã giao</td>
-                                                                <td>5.000.000 đ</td>
-                                                                <td>
-                                                                    <a className="text-success" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                                                        + Xem chi tiết
-                                                                    </a>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {Object.keys(orders).length != 0 && (
+                                                                        orders.orders.map((order, index) => {
+                                                                            return <>
+                                                                                <tr id={`wishlist_${index}`}>
+                                                                                    <td>
+                                                                                        {new Date(order.createAt).toISOString().replace('T', ' ').split(".")[0]}
 
-                                                                </td>
+                                                                                    </td>
+                                                                                    <td className="bold align_center">
+                                                                                        {order.orderAddress}
+                                                                                    </td>
+                                                                                    <td>{order.orderStatus.description}</td>
 
-                                                            </tr>
-
-                                                        </tbody>
-                                                    </table>
-                                                    <div className="collapse" id="collapseExample">
-
-                                                        <div className="cart-container card card-body">
-                                                            <div className="cart-overview js-cart">
-                                                                <ul className="cart-items">
-                                                                    <li className="cart-item">
-                                                                        <div className="product-line-grid row justify-content-between">
-
-                                                                            <div className="product-line-grid-left col-md-2">
-                                                                                <span className="product-image media-middle">
-                                                                                    <a href="product-detail.html">
-                                                                                        <img className="img-fluid" src="img/product/3.jpg" alt="Organic Strawberry Fruits" />
-                                                                                    </a>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="product-line-grid-body col-md-6">
-                                                                                <div className="product-line-info">
-                                                                                    <a className="label" href="product-detail.html" data-id_customization="0">Organic Strawberry Fruits</a>
-                                                                                </div>
-                                                                                <div className="product-line-info product-price">
-                                                                                    <span className="value">£20.00</span>
-                                                                                </div>
-
-                                                                            </div>
-                                                                            <div className="product-line-grid-right text-center product-line-actions col-md-4">
-                                                                                <div className="row">
-                                                                                    <div className="col-md-5 col qty">
-                                                                                        <div className="label">Số lượng:</div>
-                                                                                        <div className="quantity">
-                                                                                            <input type="text" name="qty" value="1" className="input-group form-control" readonly />
+                                                                                    <td>{
+                                                                                        <NumberFormat value={order.items.reduce((total, { price, quantity }) => total + price * quantity, 0)} displayType={'text'} thousandSeparator={true} suffix={'đ'} />
 
 
+                                                                                    }</td>
+                                                                                    <td>
+                                                                                        <a className="text-success" data-toggle="collapse" href={`#open_${index}`} role="button" aria-expanded="false" aria-controls="collapseExample">
+                                                                                            + Xem chi tiết
+                                                                                        </a>
+
+                                                                                    </td>
+
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colSpan={'5'} style={{ padding: '0px' }}>
+                                                                                        <div className="collapse" id={`open_${index}`}>
+
+                                                                                            <div className="cart-container card card-body">
+                                                                                                <div className="cart-overview js-cart">
+                                                                                                    <ul className="cart-items">
+                                                                                                        {
+
+                                                                                                            order.items.map((item, index) => {
+                                                                                                                return <ShoppingCartItem item={item} />
+                                                                                                                // <li className="cart-item">
+                                                                                                                //     <div className="product-line-grid row justify-content-between">
+
+                                                                                                                //         <div className="product-line-grid-left col-md-2">
+                                                                                                                //             <span className="product-image media-middle">
+                                                                                                                //                 <a href="product-detail.html">
+                                                                                                                //                     <img
+                                                                                                                //                         src={`/upload/${item.product.productImages[0].imageUrl}`}
+                                                                                                                //                         className="img-fluid"
+                                                                                                                //                         alt=""
+                                                                                                                //                     />
+                                                                                                                //                 </a>
+                                                                                                                //             </span>
+                                                                                                                //         </div>
+                                                                                                                //         <div className="product-line-grid-body col-md-6">
+                                                                                                                //             <div className="product-line-info">
+                                                                                                                //                 <a className="label" href="product-detail.html" data-id_customization="0">Organic Strawberry Fruits</a>
+                                                                                                                //             </div>
+                                                                                                                //             <div className="product-line-info product-price">
+                                                                                                                //                 <span className="value">£20.00</span>
+                                                                                                                //             </div>
+
+                                                                                                                //         </div>
+                                                                                                                //         <div className="product-line-grid-right text-center product-line-actions col-md-4">
+                                                                                                                //             <div className="row">
+                                                                                                                //                 <div className="col-md-5 col qty">
+                                                                                                                //                     <div className="label">Số lượng:</div>
+                                                                                                                //                     <div className="quantity">
+                                                                                                                //                         <input type="text" name="qty" value="1" className="input-group form-control" readonly />
+
+
+                                                                                                                //                     </div>
+                                                                                                                //                 </div>
+                                                                                                                //                 <div className="col-md-5 col price">
+                                                                                                                //                     <div className="label">Tiền:</div>
+                                                                                                                //                     <div className="product-price total">
+                                                                                                                //                         £20.00
+                                                                                                                //                     </div>
+                                                                                                                //                 </div>
+                                                                                                                //                 <div className="col-md-2 col text-xs-right align-self-end">
+                                                                                                                //                     <div className="cart-line-product-actions ">
+                                                                                                                //                         <a className="remove-from-cart" rel="nofollow" href="#" data-link-action="delete-from-cart" data-id-product="1">
+                                                                                                                //                             <i className="fa fa-trash-o" aria-hidden="true"></i>
+                                                                                                                //                         </a>
+                                                                                                                //                     </div>
+                                                                                                                //                 </div>
+                                                                                                                //             </div>
+                                                                                                                //         </div>
+                                                                                                                //     </div>
+                                                                                                                // </li>
+                                                                                                            })
+                                                                                                        }
+
+
+                                                                                                    </ul>
+                                                                                                </div>
+                                                                                            </div>
                                                                                         </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-5 col price">
-                                                                                        <div className="label">Tiền:</div>
-                                                                                        <div className="product-price total">
-                                                                                            £20.00
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-2 col text-xs-right align-self-end">
-                                                                                        <div className="cart-line-product-actions ">
-                                                                                            <a className="remove-from-cart" rel="nofollow" href="#" data-link-action="delete-from-cart" data-id-product="1">
-                                                                                                <i className="fa fa-trash-o" aria-hidden="true"></i>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li className="cart-item">
-                                                                        <div className="product-line-grid row justify-content-between">
 
-                                                                            <div className="product-line-grid-left col-md-2">
-                                                                                <span className="product-image media-middle">
-                                                                                    <a href="product-detail.html">
-                                                                                        <img className="img-fluid" src="img/product/2.jpg" alt="Organic Strawberry Fruits" />
-                                                                                    </a>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="product-line-grid-body col-md-6">
-                                                                                <div className="product-line-info">
-                                                                                    <a className="label" href="product-detail.html" data-id_customization="0">
-                                                                                        Etiam Congue Nisl Nec</a>
-                                                                                </div>
-                                                                                <div className="product-line-info product-price">
-                                                                                    <span className="value">£30.00</span>
-                                                                                </div>
-                                                                                <div className="product-line-info">
-                                                                                    <span className="label-atrr">Size:</span>
-                                                                                    <span className="value">S</span>
-                                                                                </div>
-                                                                                <div className="product-line-info">
-                                                                                    <span className="label-atrr">Color:</span>
-                                                                                    <span className="value">Blue</span>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="product-line-grid-right text-center product-line-actions col-md-4">
-                                                                                <div className="row">
-                                                                                    <div className="col-md-5 qty col">
-                                                                                        <div className="label">Qty:</div>
-                                                                                        <div className="quantity">
-                                                                                            <input type="text" name="qty" value="2" className="input-group form-control" />
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </>
 
-                                                                                            <span className="input-group-btn-vertical">
-                                                                                                <button className="btn btn-touchspin js-touchspin bootstrap-touchspin-up" type="button">
-                                                                                                    +
-                                                                                                </button>
-                                                                                                <button className="btn btn-touchspin js-touchspin bootstrap-touchspin-down" type="button">
-                                                                                                    -
-                                                                                                </button>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-5 price col">
-                                                                                        <div className="label">Total:</div>
-                                                                                        <div className="product-price total">
-                                                                                            £60.00
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-2 text-xs-right align-self-end col">
-                                                                                        <div className="cart-line-product-actions ">
-                                                                                            <a className="remove-from-cart" rel="nofollow" href="#" data-link-action="delete-from-cart" data-id-product="1">
-                                                                                                <i className="fa fa-trash-o" aria-hidden="true"></i>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                    <li className="cart-item">
-                                                                        <div className="product-line-grid row justify-content-between">
+                                                                        })
 
-                                                                            <div className="product-line-grid-left col-md-2">
-                                                                                <span className="product-image media-middle">
-                                                                                    <a href="product-detail.html">
-                                                                                        <img className="img-fluid" src="img/product/1.jpg" alt="Organic Strawberry Fruits" />
-                                                                                    </a>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div className="product-line-grid-body col-md-6">
-                                                                                <div className="product-line-info">
-                                                                                    <a className="label" href="product-detail.html" data-id_customization="0">Nulla Et Justo Non Augue</a>
-                                                                                </div>
-                                                                                <div className="product-line-info product-price">
-                                                                                    <span className="value">£40.00</span>
-                                                                                </div>
-                                                                                <div className="product-line-info">
-                                                                                    <span className="label-atrr">Size:</span>
-                                                                                    <span className="value">S</span>
-                                                                                </div>
-                                                                                <div className="product-line-info">
-                                                                                    <span className="label-atrr">Color:</span>
-                                                                                    <span className="value">Blue</span>
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="product-line-grid-right text-center product-line-actions col-md-4">
-                                                                                <div className="row">
-                                                                                    <div className="col-md-5 col qty">
-                                                                                        <div className="label">Qty:</div>
-                                                                                        <div className="quantity">
-                                                                                            <input type="text" name="qty" value="3" className="input-group form-control" />
+                                                                    )
 
-                                                                                            <span className="input-group-btn-vertical">
-                                                                                                <button className="btn btn-touchspin js-touchspin bootstrap-touchspin-up" type="button">
-                                                                                                    +
-                                                                                                </button>
-                                                                                                <button className="btn btn-touchspin js-touchspin bootstrap-touchspin-down" type="button">
-                                                                                                    -
-                                                                                                </button>
-                                                                                            </span>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-5 col price">
-                                                                                        <div className="label">Total:</div>
-                                                                                        <div className="product-price total">
-                                                                                            £120.00
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-2 col text-xs-right align-self-end">
-                                                                                        <div className="cart-line-product-actions ">
-                                                                                            <a className="remove-from-cart" rel="nofollow" href="#" data-link-action="delete-from-cart" data-id-product="1">
-                                                                                                <i className="fa fa-trash-o" aria-hidden="true"></i>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
+                                                                    }
+
+
+
+                                                                </tbody>
+                                                            </table>
+
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                }
+
+
+
                                             </div>
 
                                         </div>
@@ -326,6 +277,7 @@ function Profile(props) {
                 </div>
 
             </div>
+
         </>
     );
 }

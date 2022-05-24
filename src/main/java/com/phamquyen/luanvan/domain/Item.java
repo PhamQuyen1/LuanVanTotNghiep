@@ -12,7 +12,14 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_item"
+    )
+    @SequenceGenerator(
+            name = "seq_item",
+            allocationSize = 1
+    )
     private Long itemId;
     private int quantity;
     private int price;

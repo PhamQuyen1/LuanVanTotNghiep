@@ -13,7 +13,7 @@ function Footer() {
                                     <div className="block">
                                         <div className="block-content">
                                             <p className="logo-footer">
-                                                <img src="img/home/logo-mobie.png" alt="img" />
+                                                <img src="/img/home/logo-mobie.png" alt="img" />
                                             </p>
                                             <p className="content-logo">Grocery Store xác định luôn trung thành với những giá trị
                                                 cốt lõi của mình để luôn là sự chọn số một của người tiêu dùng

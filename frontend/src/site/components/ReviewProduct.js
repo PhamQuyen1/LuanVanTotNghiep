@@ -3,35 +3,24 @@ import ReactDOM from 'react-dom';
 import reviewApi from '../../api/ReviewApi';
 import Pagination from './Pagination';
 import '../../App.css';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { useHistory } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 function ReviewProduct(props) {
     const productId = props.productId;
-    // const [param, setParam] = useState({
-    //     page: 1
-    // })
     const reviews = props.reviews;
-    console.log("bb", reviews);
-    // const [reviews, setReviews] = useState([]);
-    const [addReviewRequest, setAddReviewRequest] = useState({});
+    const checkReview = props.checkReview;
+    const user = useSelector(state => state.todoUser) || [];
+    console.log("user", user);
+    console.log("productId", +productId);
+    console.log("bb", checkReview);
+    const history = useHistory()
+    const [addReviewRequest, setAddReviewRequest] = useState({
+        reviewScore: 5,
+        comment: null
+    });
     const handlePage = (action) => props.handlePage(action);
-
-    // useEffect(() => {
-
-    //     const fetchProductReviews = async () => {
-    //         try {
-    //             const response = await reviewApi.getProductReviews(productId, param);
-    //             console.log(param);
-
-    //             setReviews(response);
-    //             console.log("a", reviews);
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    //     // window.scrollTo(0, 0);
-    //     fetchProductReviews();
-    // }, []);
-
-
     const handleChangeRating = (e) => {
         console.log(e.target.value);
         setAddReviewRequest({ ...addReviewRequest, reviewScore: e.target.value });
@@ -41,13 +30,28 @@ function ReviewProduct(props) {
         setAddReviewRequest({ ...addReviewRequest, comment: e.target.value });
     }
 
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = async (e) => {
         e.preventDefault();
-        // const response = reviewApi.addReview(addReviewRequest);
         console.log(addReviewRequest);
         setAddReviewRequest({});
         document.getElementById('myTextarea').value = '';
+
+        const reviewRequest = {
+            productId: +productId,
+            comment: addReviewRequest.comment,
+            reviewScore: +addReviewRequest.reviewScore
+        }
+        console.log(reviewRequest);
+        const response = await reviewApi.addReview(reviewRequest);
+        toast.success("Bạn đã đánh giá sản phẩm");
+        props.handleAddReview();
+        // return <Redirect to={`product/${productId}`} />
+        // history.push(`/product/${productId}`)
     }
+    // console.log(addReviewSuccess, "aaaaaaaaa")
+    // useEffect(() => {
+    //     window.scroll(0, 0);
+    // }, [addReviewSuccess])
     return (
         <>
             <div id="review" className=" tab-pane fade">
@@ -71,15 +75,11 @@ function ReviewProduct(props) {
                                             </span>
                                             <div className="rating">
                                                 <div className="star-content">
-                                                    <div className="star"></div>
-                                                    <div className="star"></div>
-                                                    <div className="star"></div>
-                                                    <div className="star"></div>
-                                                    <div className="star"></div>
+
                                                     {
                                                         Array.apply(1, Array(5)).map((score, index) => {
 
-                                                            return <div class={`fa fa-star ${index + 1 <= review.reviewScore ? 'checked' : ''} `} ></div>
+                                                            return <div key={index} className={`fa fa-star ${index + 1 <= review.reviewScore ? 'checked' : ''} `} ></div>
                                                         })
                                                     }
                                                 </div>
@@ -97,51 +97,50 @@ function ReviewProduct(props) {
                 </div>
 
                 <Pagination page={reviews.currentPage} totalPage={reviews.totalPage} handlePage={handlePage} />
-                <form method="post" className="new-review-form" onSubmit={handleOnSubmit}>
-                    <input type="hidden" name="review[rating]" value="3" />
-                    <input type="hidden" name="product_id" />
-                    <h3 className="spr-form-title">Write a review</h3>
-                    <fieldset>
-                        <div className="spr-form-review-rating">
-                            <label className="spr-form-label">Your Rating</label>
-                            <fieldset className="ratings">
-                                <input type="radio" id="star5" name="rating" value="5" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 5} />
-                                <label className="full" for="star5" title="Awesome - 5 stars"></label>
 
-                                <input type="radio" id="star4" name="rating" value="4" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 4} />
-                                <label className="full" for="star4" title="Pretty good - 4 stars"></label>
+                {
+                    (user.user != null && checkReview) && (
+                        <form className="new-review-form" onSubmit={handleOnSubmit}>
+                            <input type="hidden" name="review[rating]" value="3" />
+                            <input type="hidden" name="product_id" />
+                            <h3 className="spr-form-title">Viết đánh giá</h3>
+                            <fieldset>
+                                <div className="spr-form-review-rating">
+                                    <label className="spr-form-label">Số điểm</label>
+                                    <fieldset className="ratings">
+                                        <input type="radio" id="star5" name="rating" value="5" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 5} />
+                                        <label className="full" for="star5" title="Awesome - 5 stars"></label>
 
-                                <input type="radio" id="star3" name="rating" value="3" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 3} />
-                                <label className="full" for="star3" title="Meh - 3 stars"></label>
+                                        <input type="radio" id="star4" name="rating" value="4" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 4} />
+                                        <label className="full" for="star4" title="Pretty good - 4 stars"></label>
 
-                                <input type="radio" id="star2" name="rating" value="2" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 2} />
-                                <label className="full" for="star2" title="Kinda bad - 2 stars"></label>
+                                        <input type="radio" id="star3" name="rating" value="3" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 3} />
+                                        <label className="full" for="star3" title="Meh - 3 stars"></label>
 
-                                <input type="radio" id="star1" name="rating" value="1" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 1} />
-                                <label className="full" for="star1" title="Sucks big time - 1 star"></label>
+                                        <input type="radio" id="star2" name="rating" value="2" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 2} />
+                                        <label className="full" for="star2" title="Kinda bad - 2 stars"></label>
 
+                                        <input type="radio" id="star1" name="rating" value="1" onChange={handleChangeRating} checked={addReviewRequest.reviewScore == 1} />
+                                        <label className="full" for="star1" title="Sucks big time - 1 star"></label>
+
+                                    </fieldset>
+                                </div>
                             </fieldset>
-                        </div>
-                    </fieldset>
-                    <fieldset className="spr-form-contact">
-                        <div className="spr-form-contact-name">
-                            <input className="spr-form-input spr-form-input-text form-control" value="" placeholder="Enter your name" />
-                        </div>
-                        <div className="spr-form-contact-email">
-                            <input className="spr-form-input spr-form-input-email form-control" value="" placeholder="Enter your email" />
-                        </div>
-                    </fieldset>
-                    <fieldset>
-                        <div className="spr-form-review-body">
-                            <div className="spr-form-input">
-                                <textarea id='myTextarea' className="spr-form-input-textarea" rows="10" placeholder="Write your comments here" value={addReviewRequest.comment} onChange={handleChangeComment}></textarea>
+
+                            <fieldset>
+                                <div className="spr-form-review-body">
+                                    <div className="spr-form-input">
+                                        <textarea id='myTextarea' required className="spr-form-input-textarea" rows="10" placeholder="Đánh giá của bạn về sản phẩm" value={addReviewRequest.comment} onChange={handleChangeComment}></textarea>
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <div className="submit">
+                                <input type="submit" name="addComment" id="submitComment" className="btn btn-default" value="Submit Review" />
                             </div>
-                        </div>
-                    </fieldset>
-                    <div className="submit">
-                        <input type="submit" name="addComment" id="submitComment" className="btn btn-default" value="Submit Review" />
-                    </div>
-                </form>
+                        </form>
+                    )
+                }
+
             </div>
         </>
     );

@@ -5,14 +5,13 @@ import com.phamquyen.luanvan.dto.CategoryRequest;
 import com.phamquyen.luanvan.repository.CategoryRepository;
 import com.phamquyen.luanvan.service.CategoryService;
 import com.phamquyen.luanvan.service.FileService;
-import com.phamquyen.luanvan.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -25,7 +24,9 @@ public class CategoryServiceImpl implements CategoryService {
     private FileService fileService;
 
     public List<Category> listAll() {
-        return categoryRepository.findAll();
+        Sort sort = Sort.by("categoryId");
+        sort = sort.ascending();
+        return categoryRepository.findAll(sort);
     }
 
     @Override
@@ -35,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void upload(MultipartFile file, CategoryRequest categoryRequest) {
         if (categoryRequest.getCategoryId() != null) {
             Optional<Category> categoryOptional = categoryRepository.findById(categoryRequest.getCategoryId());
@@ -47,14 +49,30 @@ public class CategoryServiceImpl implements CategoryService {
                     fileService.save(file);
                     category.setCategoryImage(file.getOriginalFilename());
                 }
+
                 categoryRepository.save(category);
             }
         } else {
             Category category = new Category();
             category.setCategoryName(categoryRequest.getCategoryName());
-            category.setCategoryImage(file.getOriginalFilename());
+            category.setCategoryImage(categoryRequest.getCategoryImage());
             fileService.save(file);
             categoryRepository.save(category);
         }
     }
+
+    @Override
+    public String deleteCategoryByCategoryId(Long categoryId){
+        try{
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(()-> new IllegalStateException("Danh mục không tồn tại"));
+            categoryRepository.deleteById(categoryId);
+            fileService.delete(category.getCategoryImage());
+            return "Success";
+        }
+        catch (Exception exception){
+            throw new RuntimeException("Không thể xóa danh mục");
+        }
+    }
+
 }

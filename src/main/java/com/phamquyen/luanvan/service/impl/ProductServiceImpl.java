@@ -24,7 +24,7 @@ import java.util.Map;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final int PAGE_SIZE = 5;
+    private final int PAGE_SIZE = 6;
 
     @Autowired
     private ProductRepository productRepository;
@@ -59,6 +59,7 @@ public class ProductServiceImpl implements ProductService {
                 productPage = productRepository.findAllByCategory(categoryService.findById(categoryId), pageable);
             } else if (productName == null) productPage = productRepository.findAll(pageable);
             else productPage = productRepository.findAll(productName, pageable);
+
             if(page > productPage.getTotalPages()){
                 pageable = PageRequest.of(0, this.PAGE_SIZE, sort);
                 if (categoryId != null) {
@@ -94,30 +95,32 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void saveOrUpdate(MultipartFile[] files, ProductRequest productRequest) {
 
-
-//        if (productRequest.getProductId() != null) {
-//            product = productRepository.findById(productRequest.getProductId()).orElseThrow(() -> new IllegalStateException("San pham khong ton tai"));
-//            product.setProductName(productRequest.getProductName());
-//            product.setPrice(productRequest.getPrice());
-//            product.setDescription(productRequest.getDescription());
-//            product.setQuantity(productRequest.getQuantity());
-//
-////                productRepository.save(product);
-//            if (productRequest.isUploadImage()) {
-////                    upload(files, product);
-//                productImageService.delete(product);
-////                    product.getProductImages().clear();
-//                System.out.println(product);
-//                product.setProductImages(upload(files));
-//                System.out.println(product);
-////                    productRepository.save(product);
-//            }
-//            productRepository.save(product);
-//        } else {
-        Product product = new Product();
-            product.setProductId(Long.valueOf(10));
+        Product product;
+        if (productRequest.getProductId() != null) {
+            product = productRepository.findById(productRequest.getProductId()).orElseThrow(() -> new IllegalStateException("San pham khong ton tai"));
             product.setProductName(productRequest.getProductName());
             product.setPrice(productRequest.getPrice());
+            product.setDiscount(productRequest.getDiscount());
+            product.setDescription(productRequest.getDescription());
+            product.setQuantity(productRequest.getQuantity());
+//
+//                productRepository.save(product);
+            if (productRequest.isUploadImage()) {
+//                    upload(files, product);
+                productImageService.delete(product);
+//                    product.getProductImages().clear();
+                System.out.println(product);
+                product.setProductImages(upload(files));
+                System.out.println(product);
+//                    productRepository.save(product);
+            }
+            productRepository.save(product);
+        } else {
+        product = new Product();
+//            product.setProductId(Long.valueOf(10));
+            product.setProductName(productRequest.getProductName());
+            product.setPrice(productRequest.getPrice());
+            product.setDiscount(productRequest.getDiscount());
             product.setDescription(productRequest.getDescription());
             product.setQuantity(productRequest.getQuantity());
             product.setCreateAt(LocalDateTime.now());
@@ -125,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
             product.setProductImages(upload(files));
             product = productRepository.save(product);
 //                upload(files, product);
-//        }
+        }
 
     }
 
@@ -147,8 +150,9 @@ public class ProductServiceImpl implements ProductService {
         try {
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new IllegalStateException("San pham khong ton tai"));
-            product.setDeleted(true);
-            productRepository.save(product);
+
+            productImageService.delete(product);
+            productRepository.deleteById(productId);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -173,14 +177,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public long countProduct(){
+        return productRepository.count();
+    }
+
+    @Override
     public void addWishList(Long productId) {
         try {
             Users user = userService.getUserAuthenticate();
             Product product = productRepository.findById(productId)
                     .orElseThrow(() -> new IllegalStateException("Product khong ton tai"));
             List<Product> userWishList = user.getWishlist();
-            userWishList.add(product);
-            userService.save(user);
+            if(!userWishList.contains(product)){
+                userWishList.add(product);
+                userService.save(user);
+            }
+
         } catch (Exception e) {
             throw new IllegalStateException("Them san pham yeu thich khong thanh cong");
         }

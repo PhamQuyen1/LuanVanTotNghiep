@@ -67,9 +67,12 @@ function todoCart(state = initCart, action) {
             newStateUpdate.Item.map((item, index) => {
                 if (item.product.productId == action.payload.productId) {
                     const quantityUpdate = action.payload.quantity - item.quantity;
-                    newStateUpdate.Item[index].quantity += quantityUpdate;
-                    newStateUpdate.totalQuantity += quantityUpdate;
-                    newStateUpdate.totalAmount += quantityUpdate * item.price;
+                    if (newStateUpdate.Item[index].quantity + quantityUpdate > 0 && newStateUpdate.Item[index].quantity + quantityUpdate <= 10) {
+                        newStateUpdate.Item[index].quantity += quantityUpdate;
+                        newStateUpdate.totalQuantity += quantityUpdate;
+                        newStateUpdate.totalAmount += quantityUpdate * item.price;
+                    }
+
                 }
             });
             return newStateUpdate;

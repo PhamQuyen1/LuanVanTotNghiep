@@ -15,4 +15,6 @@ public interface CategoryService {
     Category findById(Long categoryId);
 
     void upload(MultipartFile file, CategoryRequest categoryRequest);
+
+    String deleteCategoryByCategoryId(Long categoryId);
 }

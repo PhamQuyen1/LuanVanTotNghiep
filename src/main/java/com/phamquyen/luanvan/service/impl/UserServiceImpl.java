@@ -13,6 +13,10 @@ import com.phamquyen.luanvan.service.EmailService;
 import com.phamquyen.luanvan.service.RoleService;
 import com.phamquyen.luanvan.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,9 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -48,7 +50,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public void confirmAt(Users users) {
-        users.setLocked(true);
+        users.setLocked(false);
         usersRepository.save(users);
     }
     @Override
@@ -69,7 +71,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         users.setPassword(encodePassword);
         users.setRole(roleService.getRole(ERole.USER));
-
+        users.setLocked(true);
         usersRepository.save(users);
 
         String token = UUID.randomUUID().toString();
@@ -118,8 +120,25 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public List<Users> listAll(){
-        return usersRepository.findAll();
+    public Map<String, Object> listAll(String email, int page, String sortField, String sortDir){
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+
+        Pageable pageable = PageRequest.of(page - 1, 5, sort);
+        Page<Users> usersPage;
+        if (email != null){
+            usersPage = usersRepository.findAllByEmail(email, pageable);
+        }else {
+            usersPage = usersRepository.findAll(pageable);
+        }
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", usersPage.getContent());
+        response.put("currentPage", page > usersPage.getTotalPages() ? 1 : page);
+        response.put("totalPage", usersPage.getTotalPages());
+        response.put("totalItem", usersPage.getTotalElements());
+        return  response;
     }
 
     @Override
@@ -168,7 +187,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         Users user = usersRepository.findById(modifiedInfoRequest.getUserId())
                 .orElseThrow(()->new IllegalStateException("User khong ton tai"));
-        user.setLocked(modifiedInfoRequest.isLooked());
+        System.out.println("1" + modifiedInfoRequest.isLocked());
+        user.setLocked(modifiedInfoRequest.isLocked());
+        System.out.println(modifiedInfoRequest);
         user.setRole(roleService.getRole(ERole.valueOf(modifiedInfoRequest.getRole())));
         usersRepository.save(user);
     }
@@ -196,5 +217,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void save(Users user){
         usersRepository.save(user);
+    }
+
+    @Override
+    public long countUser(){
+        return usersRepository.count();
     }
 }

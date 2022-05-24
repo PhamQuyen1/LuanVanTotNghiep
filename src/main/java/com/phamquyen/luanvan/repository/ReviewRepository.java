@@ -13,7 +13,7 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    void deleteByReviewId(Long reviewId);
+    Review findByReviewId(Long reviewId);
 
     Page<Review> findAllByProduct(Product product, Pageable pageable);
 

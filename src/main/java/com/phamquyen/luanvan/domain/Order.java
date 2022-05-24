@@ -16,12 +16,19 @@ import java.util.List;
 public class Order {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "seq_order"
+    )
+    @SequenceGenerator(
+            name = "seq_order",
+            allocationSize = 1
+    )
     private Long orderId;
     private LocalDateTime createAt;
     private String orderAddress;
     private String note;
-    private int shippingFee;
+
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")

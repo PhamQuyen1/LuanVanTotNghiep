@@ -1,5 +1,6 @@
 package com.phamquyen.luanvan.dto;
 
+import com.phamquyen.luanvan.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class ReviewResponse {
     private String comment;
     private int reviewScore;
     private String fullname;
+    private Product product;
 }

@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("api/v1/category")
 public class CategoryController {
 
@@ -62,10 +62,17 @@ public class CategoryController {
                     "Content-Type=multipart/form-data"
             })
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<?> updateCategory(@RequestPart MultipartFile file, @RequestPart CategoryRequest category) {
+    public ResponseEntity<?> updateCategory(@RequestPart(required = false) MultipartFile file, @RequestPart CategoryRequest category) {
         categoryService.upload(file, category);
         return ResponseEntity.ok("Success");
     }
+
+    @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+    public ResponseEntity<?> deleteCategory(@PathVariable Long categoryId){
+        return ResponseEntity.ok(categoryService.deleteCategoryByCategoryId(categoryId));
+    }
+
 
 
 }

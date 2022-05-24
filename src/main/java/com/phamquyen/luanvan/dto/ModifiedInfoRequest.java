@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ModifiedInfoRequest {
     private Long userId;
-    private boolean looked;
+    private boolean locked;
     private String role;
 }

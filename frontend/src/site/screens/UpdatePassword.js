@@ -53,9 +53,7 @@ function UpdatePassword() {
                                 <div className="breadcrumb">
                                     <ol>
                                         <li>
-                                            <a href="#">
-                                                <span>Trang chủ</span>
-                                            </a>
+                                            <Link to="/" className="parent"><span>Trang chủ</span></Link>
                                         </li>
                                         <li>
                                             <a href="#">

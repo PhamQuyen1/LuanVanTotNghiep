@@ -1,6 +1,8 @@
 package com.phamquyen.luanvan.repository;
 
 import com.phamquyen.luanvan.domain.Users;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -18,4 +20,8 @@ public interface UsersRepository extends JpaRepository<Users, Long>{
 
     @Query("SELECT u FROM Users u where u.email LIKE %:email%")
     List<Users> findAllByEmail(String email);
+
+    @Query("SELECT u FROM Users u where u.email LIKE %:email%")
+    Page<Users> findAllByEmail(String email, Pageable pageable);
+
 }

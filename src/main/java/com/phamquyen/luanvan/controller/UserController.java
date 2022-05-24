@@ -11,49 +11,59 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("api/v1/user")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @RequestMapping("api-public/v1/forgotPassword")
+    @PostMapping("api-public/v1/forgotPassword")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest forgotPasswordRequest){
         userService.forgotPassword(forgotPasswordRequest.getEmail());
         return ResponseEntity.ok("Success!!");
     }
-    @GetMapping("profile")
+    @GetMapping("api/v1/user/profile")
     @PreAuthorize("hasAnyAuthority('USER', 'ADMIN', 'EMPLOYEE')")
     public ResponseEntity<?> getProfile(Authentication authentication){
         UserDetails user = (UserDetails) authentication.getPrincipal();
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("users")
+//    @GetMapping("users")
+//    @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
+//    public ResponseEntity<?> listAll(){
+//        return ResponseEntity.ok(userService.listAll());
+//    }
+    @GetMapping("api/v1/user")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
-    public ResponseEntity<?> listAll(){
-        return ResponseEntity.ok(userService.listAll());
+    public ResponseEntity<Map<String, Object>> listAll(
+            @RequestParam(required = false) String email,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "userId") String sortField,
+            @RequestParam(defaultValue = "desc") String sortDir){
+        return ResponseEntity.ok(userService.listAll(email, page, sortField, sortDir));
     }
 
-    @GetMapping("{id}")
+    @GetMapping("api/v1/user/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<?> findById(@PathVariable Long id){
         return ResponseEntity.ok(userService.findById(id));
     }
 
-    @RequestMapping("api-public/v1/confirmForgotPassword")
+    @PostMapping("api-public/v1/confirmForgotPassword")
     public ResponseEntity<?> confirmForgotPassword(@RequestBody ConfirmForgotPasswordRequest confirmForgotPasswordRequest){
         userService.confirmForgotPassword(confirmForgotPasswordRequest);
         return ResponseEntity.ok("Success");
     }
 
-    @PutMapping("updateInfo")
+    @PutMapping("api/v1/user/updateInfo")
     public ResponseEntity<?> updateInfo(@RequestBody UserRequest userRequest, Authentication authentication){
         return ResponseEntity.ok(userService.updateInfo(userRequest));
     }
-    @PutMapping("updatePassword")
+    @PutMapping("api/v1/user/updatePassword")
     public ResponseEntity<?> updatePassword(@RequestBody UpdatePassword updatePassword){
         boolean result = userService.updatePassword(updatePassword);
         if(result)
@@ -61,7 +71,7 @@ public class UserController {
         return ResponseEntity.ok("Password không chính xác");
     }
 
-    @PutMapping("modifiedInfo")
+    @PutMapping("api/v1/user/modifiedInfo")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'EMPLOYEE')")
     public ResponseEntity<?> modifiedInfo(@RequestBody ModifiedInfoRequest modifiedInfoRequest){
         userService.modifiedInfo(modifiedInfoRequest);

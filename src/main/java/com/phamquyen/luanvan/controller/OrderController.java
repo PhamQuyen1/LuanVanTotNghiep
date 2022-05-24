@@ -25,7 +25,7 @@ public class OrderController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> updateOrderStatus(@RequestParam Long orderId, String status){
+    public ResponseEntity<?> updateOrderStatus(@RequestParam Long orderId,@RequestParam String status){
         orderService.updateOrderStatus(orderId, status);
         return ResponseEntity.ok("Success");
     }
@@ -40,9 +40,10 @@ public class OrderController {
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String status,
             @RequestParam(required = false) String paymentMethod,
+            @RequestParam(defaultValue = "orderId") String sortField,
             @RequestParam(defaultValue = "desc") String sortDir,
             @RequestParam(defaultValue = "1") int page){
-        return ResponseEntity.ok(orderService.listAll(email, status, paymentMethod, sortDir, page));
+        return ResponseEntity.ok(orderService.listAll(email, status, paymentMethod, sortField, sortDir, page, 5));
     }
 
 }

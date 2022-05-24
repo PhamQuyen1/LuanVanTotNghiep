@@ -24,6 +24,8 @@ public interface ProductService {
 
     void updateQuantityProduct(Product product, int quantity);
 
+    long countProduct();
+
     void addWishList(Long productId);
 
     void deleteWishList(Long productId);

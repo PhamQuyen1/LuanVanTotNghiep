@@ -9,6 +9,7 @@ import org.hibernate.sql.Update;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserService {
@@ -21,7 +22,7 @@ public interface UserService {
 
     void forgotPassword(String email);
 
-    List<Users> listAll();
+    Map<String, Object> listAll(String email, int page, String sortField, String sortDir);
 
     Users findById(Long id);
 
@@ -42,4 +43,6 @@ public interface UserService {
     List<Users> findAll();
 
     void save(Users user);
+
+    long countUser();
 }

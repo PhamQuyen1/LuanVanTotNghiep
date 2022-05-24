@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import NumberFormat from 'react-number-format';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import { useHistory, useRouteMatch } from 'react-router-dom/cjs/react-router-dom.min';
+import { toast } from 'react-toastify';
 import reviewApi from '../../api/ReviewApi';
+import userApi from '../../api/UserApi';
 import '../../App.css';
 import { addToCart } from './action';
 
 function ProductItem(props) {
 
     let history = useHistory();
-
+    const { user } = useSelector(state => state.todoUser);
     const [product, setProduct] = useState(props.product);
     const [check, setCheck] = useState(props.check);
     const [reviewScore, setReviewScore] = useState(0);
@@ -30,6 +32,18 @@ function ProductItem(props) {
         console.log("dispatch", dispatch);
 
     };
+    const handleAddWishList = (productId) => {
+        console.log("wish", productId)
+        const data = { productId: +productId };
+        userApi.addWishList(+productId).then(
+            response => {
+                toast.success("Thêm vào danh sách yêu thích thành công")
+            },
+            error => {
+                toast.error("Thêm vào danh sách yêu thích thất bại")
+            }
+        )
+    }
     useEffect(() => {
         const fetchReviewScore = async () => {
             try {
@@ -76,7 +90,7 @@ function ProductItem(props) {
                     <div className="product-description">
                         <div className="product-groups">
                             <div className="product-title">
-                                <Link to={`/product-detail/${product.productId}`}>{product.productName}</Link>
+                                <Link to={`/product/${product.productId}`}>{product.productName}</Link>
 
                             </div>
                             <div className="rating">
@@ -90,7 +104,7 @@ function ProductItem(props) {
                                     {
                                         Array.apply(1, Array(5)).map((score, index) => {
 
-                                            return <span class={`fa fa-star ${index + 1 <= reviewScore ? 'checked' : ''} `} ></span>
+                                            return <span key={index} className={`fa fa-star ${index + 1 <= reviewScore ? 'checked' : ''} `} ></span>
                                         })
                                     }
                                     {/* <span class="fa fa-star checked"></span>
@@ -117,7 +131,12 @@ function ProductItem(props) {
                         {
                             !check &&
                             (<div className="product-buttons d-flex justify-content-center">
-                                <span className="quick-view hidden-sm-down" onClick={() => handleAddToCart(product)}> <i className="fa fa-shopping-cart" aria-hidden="true"></i></span>
+                                {
+                                    product.quantity > 0 && (
+                                        <span className="quick-view hidden-sm-down" onClick={() => handleAddToCart(product)}> <i className="fa fa-shopping-cart" aria-hidden="true"></i></span>
+                                    )
+                                }
+
                                 {/* <form action="#" method="post" className="formAddToCart">
                                     <input type="hidden" name="id_product" value="1" />
                                     <a className="add-to-cart" href="#" data-button-action="add-to-cart">
@@ -125,9 +144,17 @@ function ProductItem(props) {
                                     </a>
                                 </form> */}
 
-                                <a href="#" className="quick-view hidden-sm-down" data-link-action="quickview">
+                                <Link to={`/product/${product.productId}`} className="quick-view hidden-sm-down" data-link-action="quickview">
                                     <i className="fa fa-eye" aria-hidden="true"></i>
-                                </a>
+                                </Link>
+                                {
+                                    user && (
+                                        <a onClick={() => handleAddWishList(product.productId)} className="quick-view hidden-sm-down" data-link-action="quickview">
+                                            <i className="fa fa-heart" aria-hidden="true"></i>
+                                        </a>
+                                    )
+                                }
+
                             </div>)}
                     </div>
                 </div>

@@ -14,6 +14,7 @@ public class ProductRequest {
     private String productName;
     private String description;
     private int price;
+    private int discount;
     private int quantity;
     private boolean uploadImage;
 }

@@ -21,58 +21,41 @@ import ConfirmTokenSuccess from './site/screens/ConfirmToken';
 import Profile from './site/screens/Profile';
 import UpdatePassword from './site/screens/UpdatePassword';
 import UpdateInfo from './site/screens/UpdateInfo';
+import Checkout from './site/screens/Checkout';
+import PrivateRoute from './site/route/PrivateRoute';
+import { ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
+import Site from './site/screens/Site';
+import Dashboard from './dashboard';
+import { Redirect } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 function App() {
 
   const { user } = useSelector(state => state.todoUser);
-
+  const isAuthenticated = user != null ? true : false;
+  console.log("is", isAuthenticated);
+  console.log("isUser", user);
+  // if (user && user.role.roleName == 'EMPLOYEE') {
+  //   return <Redirect to={{
+  //     pathname: "/dashboard/order",
+  //   }} />
+  // }
+  // if (user && user.role.roleName == 'EMPLOYEE') {
+  //   }
   return (
     <BrowserRouter>
-      <div id="home">
-        <Header />
 
-        <Switch>
-          <Route path="/product" exact>
-            <Product />
-          </Route>
-          <Route path="/updateInfo" exact>
-            <UpdateInfo />
-          </Route>
-          <Route path="/updatePassword" exact>
-            <UpdatePassword />
-          </Route>
-          <Route path="/profile" exact>
-            <Profile user={user} />
-          </Route>
-          <Route path="/confirm" exact>
-            <ConfirmTokenSuccess />
-          </Route>
-          <Route path="/register" exact>
-            <Register />
-          </Route>
-          <Route path="/product/category/:categoryId" exact>
-            <Product />
-          </Route>
-          <Route path="/product/:productId" exact>
-            <ProductDetail />
-          </Route>
-          <Route path="/login" exact>
-            <Login />
-          </Route>
-          <Route path="/shoppingCart" exact>
-            <ShoppingCart />
-          </Route>
-          <Route path="/about-us">
-            <AboutUs />
-          </Route>
-          <Route path="/" exact={true}>
-            <Home />
-          </Route>
-          {/* <Route path="/productDetail" exact={true}>
-            <ProductDetail />
-          </Route> */}
-        </Switch>
-        <Footer />
-      </div>
+      {/* {
+        user && user.role && user.role.roleName !== "USER" ? <Redirect to={{
+          pathname: "/dashboard/order",
+        }} /> : <Site />
+      } */}
+      {
+        user && user.role && user.role.roleName !== "USER" ? <Dashboard /> : <Site />
+      }
+      {/* <Site /> */}
+
     </BrowserRouter>
 
   );

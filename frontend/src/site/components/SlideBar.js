@@ -79,7 +79,7 @@ function SlideBar() {
 
                         {
                             categories.map((category, index) => {
-                                return <div className="cateTitle hasSubCategory open level1">
+                                return <div className="cateTitle hasSubCategory open level1" key={index}>
                                     <Link className="cateItem" to={`/product/category/${category.categoryId}`}>
                                         {category.categoryName}
                                     </Link>

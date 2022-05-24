@@ -140,6 +140,8 @@ function Home() {
                             <div id="content-wrapper" className="full-width">
                                 <div id="main">
                                     <section className="page-home">
+
+
                                         <div className="featured-category">
                                             <div className="container">
                                                 <div className="tab-content text-center">
@@ -152,7 +154,7 @@ function Home() {
                                                             (
                                                                 <ReactOwlCarousel className='owl-theme' loop margin={10} nav items={5} dots={false}>
                                                                     {categories.map((category, index) => {
-                                                                        return <CategoryItem item={category} key={category.categoryId} quantity={categoryProductQuantity[category.categoryId]} />
+                                                                        return <CategoryItem item={category} key={index} quantity={categoryProductQuantity[category.categoryId]} />
                                                                     }
                                                                     )}
                                                                 </ReactOwlCarousel>
@@ -162,6 +164,8 @@ function Home() {
                                                 </div>
                                             </div>
                                         </div>
+
+
 
                                         <div className="section spacing-10 group-image-special">
                                             <div className="row">
@@ -189,52 +193,60 @@ function Home() {
 
                                             </div>
                                         </div>
-                                        <div className="featured-product">
-                                            <div className="container">
-                                                <div className="title-tab-content  text-center">
-                                                    <div className="title-product justify-content-between">
-                                                        <h2>SẢM PHẨM KHUYẾN MÃI</h2>
-                                                        <p>Đây là những sản phẩm khuyến mãi của chúng tôi</p>
+                                        <div>
+                                            <div className="featured-product">
+                                                <div className="container">
+                                                    <div className="title-tab-content  text-center">
+                                                        <div className="title-product justify-content-between">
+                                                            <h2>SẢM PHẨM Bán chạy nhất</h2>
+                                                            <p>Đây là những sản phẩm khuyến mãi của chúng tôi</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="tab-content" style={{ marginTop: "0" }}>
-                                                    {
-                                                        topSaleProducts.map(product => {
-                                                            return <ProductItem product={product} key={product.productId} />
-                                                        })
-                                                    }
-                                                    {/* <Item />
-                                                    <Item />
-                                                    <Item />
-                                                    <Item />
-                                                    <Item /> */}
+                                                    <div className="tab-content" style={{ marginTop: "0" }}>
+                                                        {
+                                                            topSaleProducts.map((product, index) => {
+                                                                return <ProductItem product={product} key={index} />
+                                                            })
+                                                        }
+                                                        <div className="content-showmore text-center has-showmore" style={{ display: 'inline-block' }}>
+                                                            {/* <Link className="btn btn-default novShowMore" to="/product"><span>Tất cả sản phẩm</span></Link> */}
+                                                            <hr style={{ border: '1px', width: '50px' }} />
+                                                            {/* <input type="hidden" value="0" className="count_showmore" /> */}
+                                                        </div>
+                                                        {/* <Link className="btn btn-default novShowMore" to="/product" style={{ display: 'inline-block' }}><span>Tất cả sản phẩm</span></Link> */}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div className="featured-product">
                                             <div className="container">
                                                 <div className="title-tab-content  text-center">
                                                     <div className="title-product justify-content-between">
-                                                        <h2>SẢM PHẨM MỚI NHẤT</h2>
+                                                        <h2>SẢM PHẨM Đánh giá tôt nhất</h2>
                                                         <p>Đây là những sản phẩm mới nhất của chúng tôi</p>
                                                     </div>
                                                 </div>
                                                 <div className="tab-content" style={{ marginTop: "0" }}>
                                                     {
-                                                        topReviewProducts.map(product => {
-                                                            return <ProductItem product={product} key={product.productId} />
+                                                        topReviewProducts.map((product, index) => {
+                                                            return <ProductItem product={product} key={index} className={"item text-center col-20"} />
                                                         })
                                                     }
 
-                                                    <div className="content-showmore text-center has-showmore" style={{ display: 'inline' }}>
-                                                        <Link className="btn btn-default novShowMore" to="/product"><span>Tất cả sản phẩm</span></Link>
-                                                        {/* <a className="btn btn-default novShowMore" href="./product-grid-sidebar-right.html"><span>Tất cả sản phẩm</span></a> */}
-                                                        <input type="hidden" value="0" className="count_showmore" />
+
+                                                    <div className="content-showmore text-center has-showmore novShowMore" style={{ clear: 'both' }} >
+                                                        {/* <hr style={{ border: '1px', width: '50px' }} /> */}
+                                                        <Link className="btn btn-default novShowMore" to="/product" ><span>Tất cả sản phẩm</span></Link>
+
+                                                        <input type="hidden" value="0" className="count_showmore novShowMore" />
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
 
 
 
@@ -242,12 +254,15 @@ function Home() {
 
                                     </section>
 
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div >
+
+
 
         </>
     );

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,10 +44,12 @@ public class ItemServiceImpl implements ItemService {
     public List<Product> getTopSaleProducts(){
         List<Product> products = productService.findAll();
         List<Item> items = itemRepository.findAll();
-        Map<Product, Integer> productIntegerMap = items.stream()
+        Map<Product, Integer> productInteger = items.stream()
                 .collect(Collectors.groupingBy(Item::getProduct,
                         Collectors.summingInt(Item::getQuantity)));
-
+        Map<Product, Integer> productIntegerMap = new LinkedHashMap<>();
+        productInteger.entrySet().stream().sorted(Map.Entry.<Product, Integer>comparingByValue().reversed()).forEachOrdered(i -> productIntegerMap.put(i.getKey(), i.getValue()));
+        System.out.println(productIntegerMap);
         List<Product> productList = new ArrayList<>(productIntegerMap.keySet());
         if(productList.isEmpty()) productList = products;
         else {
@@ -61,6 +64,7 @@ public class ItemServiceImpl implements ItemService {
                         if (product.getProductId() != id) {
                             System.out.println(product);
                             productList.add(product);
+                            break;
                         }
                     }
                 }

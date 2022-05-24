@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -30,7 +31,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             " = :paymentMethod")
     Page<Order> findWithKeyword(String fullname, Long status, Long paymentMethod, Pageable pageable);
 
-//    @Query("SELECT o FROM Order o " +
-//            "where :keyword")
-//    Page<Order> findWithKeyword1(String keyword, Pageable pageable);
+    List<Order> findByUser(Users user);
+
+    List<Order> findAllByCreateAt(LocalDateTime date);
+
+    List<Order> findByCreateAtBetween(LocalDateTime start, LocalDateTime end);
 }

@@ -1,5 +1,6 @@
 package com.phamquyen.luanvan.domain;
 
+import com.phamquyen.luanvan.enumeration.EAuthProvider;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,8 +36,11 @@ public class Users implements UserDetails {
     private String phone;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean locked = false;
+    private boolean locked;
     private boolean enabled = false;
+
+    @Enumerated(EnumType.STRING)
+    private EAuthProvider provider;
 
     @ManyToOne()
     @JoinColumn(name = "role_id")
@@ -80,7 +84,7 @@ public class Users implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return locked;
+        return !locked;
     }
 
     @Override

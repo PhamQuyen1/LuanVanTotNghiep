@@ -1,3 +1,4 @@
+import authHeader from "./AuthHeader";
 import axiosClient from "./AxiosClient";
 
 class ProductApi {
@@ -30,6 +31,18 @@ class ProductApi {
     getTopReviewProducts = () => {
         const url = '/api/v1/review/public/topReviewProduct';
         return axiosClient.get(url);
+    }
+    updateProduct = (data) => {
+        const url = `/api/v1/product/public`;
+        return axiosClient.put(url, data, { headers: authHeader(), "Content-Type": "multipart/form-data" });
+    }
+    createProduct = (data) => {
+        const url = `/api/v1/product/public/add`;
+        return axiosClient.post(url, data, { headers: authHeader(), "Content-Type": "multipart/form-data" });
+    }
+    deleteProductById = (productId) => {
+        const url = `/api/v1/product/${productId}`;
+        return axiosClient.delete(url, { headers: authHeader() });
     }
 
 }

@@ -21,6 +21,8 @@ public class Category {
             allocationSize = 1
     )
     private Long categoryId;
+    @Column(unique = true)
     private String categoryName;
+    @Column(unique = true)
     private String categoryImage;
 }

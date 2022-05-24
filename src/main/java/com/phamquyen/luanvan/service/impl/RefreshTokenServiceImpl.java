@@ -33,7 +33,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     public boolean verifyExpiredRefreshToken(RefreshToken token) {
 
         if (token.getCreateAt().plusMillis(EXPIRED_TIME).isBefore(Instant.now())) {
-            refreshTokenRepository.delete(token);
+//            refreshTokenRepository.delete(token);
             throw new IllegalStateException("Token da het han");
         }
         return true;

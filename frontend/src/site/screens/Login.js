@@ -8,6 +8,10 @@ import { login } from '../components/action/auth';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { Link } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import GoogleLogin from 'react-google-login';
 
 const schema = yup.object({
     email: yup.string().email('Định dạnh email sai !').required('Email không được rỗng'),
@@ -20,28 +24,53 @@ function Login() {
     //     email: null,
     //     password: null
     // })
-
+    const [isLogin, setLogin] = useState(false)
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(schema)
     })
     const [message, setMessage] = useState(null);
     const dispatch = useDispatch();
-
+    const { state } = useLocation();
     const history = useHistory();
 
     const onSubmit = data => {
         // e.preventDefault();
         console.log(data)
         dispatch(login(data.email, data.password))
-            .then(() => {
-                history.push("/");
+            .then(response => {
+                // history.push("/");
+                setLogin(true);
+                console.log('response', response)
+                //     console.log(state?.from.pathname);
+                //     return <Redirect to={'/'} />
+                //     // console.log(state?.form.pathname ? state?.form.pathname : '/');
+                //     // history.push(state?.form.pathname ? state?.form.pathname : '/');
+                // }
+
             })
-            .catch(() => {
+            .catch((error) => {
+                console.log(error);
                 setMessage('Tên đăng nhập hoặc mật khẩu không chính xác')
             });
 
     }
 
+    if (isLogin) {
+        console.log(state?.from.pathname);
+        toast.info("Đã đăng nhập thành công", {
+            toastId: 'aa'
+        })
+        return <Redirect to={state?.from || '/'} />
+        // console.log(state?.form.pathname ? state?.form.pathname : '/');
+        // history.push(state?.form.pathname ? state?.form.pathname : '/');
+    }
+    const responseGoogle = (response) => {
+        console.log(11111111111111111111)
+        console.log(response);
+    }
+    const onFailure = (response) => {
+        console.log(response)
+    }
     // const handleOnChangeEmail = (e) => {
     //     setLoginForm({ ...loginForm, email: e.target.value });
     // }
@@ -49,6 +78,7 @@ function Login() {
 
     //     setLoginForm({ ...loginForm, password: e.target.value });
     // }
+    console.log('aaaaaaaaaaaaaaaaaaaaaaaa');
     return (
         <>
             <div className="user-login blog">
@@ -61,9 +91,7 @@ function Login() {
                                 <div className="breadcrumb">
                                     <ol>
                                         <li>
-                                            <a href="#">
-                                                <span>Trang chủ</span>
-                                            </a>
+                                            <Link to="/" className="parent"><span>Trang chủ</span></Link>
                                         </li>
                                         <li>
                                             <a href="#">
@@ -90,6 +118,16 @@ function Login() {
                                     </div>
                                     <div className="login-form">
                                         <form id="customer-form" onSubmit={handleSubmit(onSubmit)}>
+                                            {/* <div>
+                                                <GoogleLogin
+                                                    clientId="18706433484-eltahbehul04cueb63og97rlqiof7jkc.apps.googleusercontent.com"
+                                                    onSuccess={responseGoogle}
+                                                    onFailure={onFailure}
+                                                    buttonText={'Tiếp tục với Google'}
+                                                />
+
+                                            </div> */}
+                                            {/* <a href='http://localhost:8080/oauth2/authorize/google?redirect_uri=http://localhost:3000/login'>aaaaaaaaaaaaaaa</a> */}
                                             <div>
                                                 <input type="hidden" name="back" value="my-account" />
                                                 <div className="form-group no-gutters">
@@ -122,12 +160,19 @@ function Login() {
                                             </div>
                                             <div className="clearfix">
                                                 <div className="text-center no-gutters">
-                                                    <input type="hidden" name="submitLogin" value="1" />
                                                     <button className="btn btn-primary" data-link-action="sign-in" type="submit">
                                                         Đăng nhập
                                                     </button>
+                                                </div>
+
+                                                <div className="text-center no-gutters">
+                                                    <input type="hidden" name="submitLogin" value="1" />
+
                                                     <Link to={'/register'} className="btn btn-default">
                                                         Đăng ký ?
+                                                    </Link>
+                                                    <Link to={'/forgotPassword'} className="btn btn-default">
+                                                        Quên mật khẩu ?
                                                     </Link>
                                                 </div>
                                             </div>
